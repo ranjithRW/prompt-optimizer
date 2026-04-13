@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Optimizer — AI-Powered</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">PromptOptimizer</span>
+        <span class="logo-badge">AI</span>
+      </div>
+      <div class="header-actions">
+        <button id="historyToggleBtn" class="btn-icon" title="Prompt History" aria-label="Toggle history panel">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 0 .5-4"/><polyline points="3 3 3 9 9 9"/></svg>
+        </button>
+        <button id="themeToggleBtn" class="btn-icon" title="Toggle Theme" aria-label="Toggle dark/light theme">
+          <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main layout -->
+  <main class="main">
+
+    <!-- History Sidebar -->
+    <aside id="historySidebar" class="history-sidebar" aria-label="Prompt history">
+      <div class="sidebar-header">
+        <h2>History</h2>
+        <button id="clearHistoryBtn" class="btn-text-danger" title="Clear all history">Clear All</button>
+      </div>
+      <ul id="historyList" class="history-list" role="list">
+        <li class="history-empty">No history yet</li>
+      </ul>
+    </aside>
+
+    <!-- Editor area -->
+    <section class="editor-section">
+
+      <!-- Mode selector -->
+      <div class="mode-selector" role="group" aria-label="Optimization mode">
+        <button class="mode-btn active" data-mode="creative">
+          <span class="mode-icon">🎨</span> Creative
+        </button>
+        <button class="mode-btn" data-mode="technical">
+          <span class="mode-icon">⚙️</span> Technical
+        </button>
+        <button class="mode-btn" data-mode="marketing">
+          <span class="mode-icon">📣</span> Marketing
+        </button>
+        <button class="mode-btn" data-mode="coding">
+          <span class="mode-icon">💻</span> Coding
+        </button>
+      </div>
+
+      <!-- Compare view -->
+      <div class="compare-grid">
+
+        <!-- LEFT: Input -->
+        <div class="panel panel-input glass">
+          <div class="panel-header">
+            <span class="panel-label">
+              <span class="dot dot-blue"></span> Original Prompt
+            </span>
+            <div class="panel-header-right">
+              <div class="strength-wrap" id="inputStrengthWrap" style="display:none">
+                <span class="strength-label">Strength</span>
+                <div class="strength-bar-track">
+                  <div class="strength-bar-fill" id="inputStrengthBar"></div>
+                </div>
+                <span class="strength-score" id="inputStrengthScore">0</span>
+              </div>
+              <span class="char-count" id="charCount">0 / 4000</span>
+            </div>
+          </div>
+          <textarea
+            id="promptInput"
+            class="prompt-textarea"
+            placeholder="Enter your prompt here…&#10;&#10;Example: create a video about travel"
+            maxlength="4000"
+            rows="10"
+            aria-label="Original prompt input"
+          ></textarea>
+          <div class="panel-footer">
+            <label class="toggle-label" title="Show what was improved and why">
+              <input type="checkbox" id="explainToggle" />
+              <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              <span>Explain improvements</span>
+            </label>
+            <button id="optimizeBtn" class="btn-primary" aria-live="polite">
+              <span class="btn-text">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Optimize Prompt
+              </span>
+              <span class="btn-loading" hidden>
+                <span class="spinner"></span> Optimizing…
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT: Output -->
+        <div class="panel panel-output glass">
+          <div class="panel-header">
+            <span class="panel-label">
+              <span class="dot dot-green"></span> Optimized Prompt
+            </span>
+            <div class="panel-header-right">
+              <div class="strength-wrap" id="outputStrengthWrap" style="display:none">
+                <span class="strength-label">Strength</span>
+                <div class="strength-bar-track">
+                  <div class="strength-bar-fill" id="outputStrengthBar"></div>
+                </div>
+                <span class="strength-score" id="outputStrengthScore">0</span>
+              </div>
+              <button id="copyBtn" class="btn-ghost" hidden aria-label="Copy optimized prompt">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy
+              </button>
+              <button id="usePromptBtn" class="btn-accent" hidden aria-label="Use this optimized prompt">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                Use Prompt
+              </button>
+            </div>
+          </div>
+          <div id="outputArea" class="output-area" aria-live="polite" aria-label="Optimized prompt output">
+            <div class="output-placeholder">
+              <div class="placeholder-icon">✨</div>
+              <p>Your optimized prompt will appear here</p>
+              <p class="placeholder-sub">Enter a prompt and click <strong>Optimize Prompt</strong></p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /compare-grid -->
+
+      <!-- Score comparison bar -->
+      <div id="scoreComparison" class="score-comparison glass" hidden>
+        <div class="score-col">
+          <span class="score-col-label">Before</span>
+          <div class="score-ring-wrap">
+            <svg class="score-ring" viewBox="0 0 56 56">
+              <circle class="ring-bg" cx="28" cy="28" r="22"/>
+              <circle class="ring-fill ring-before" id="ringBefore" cx="28" cy="28" r="22" style="--pct:0"/>
+            </svg>
+            <span class="score-ring-value" id="scoreBefore">0</span>
+          </div>
+        </div>
+        <div class="score-arrow">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <span id="scoreDiff" class="score-diff">+0</span>
+        </div>
+        <div class="score-col">
+          <span class="score-col-label">After</span>
+          <div class="score-ring-wrap">
+            <svg class="score-ring" viewBox="0 0 56 56">
+              <circle class="ring-bg" cx="28" cy="28" r="22"/>
+              <circle class="ring-fill ring-after" id="ringAfter" cx="28" cy="28" r="22" style="--pct:0"/>
+            </svg>
+            <span class="score-ring-value" id="scoreAfter">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error banner -->
+      <div id="errorBanner" class="error-banner" hidden role="alert">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="errorMessage"></span>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Use Prompt Modal -->
+  <div id="usePromptModal" class="modal-overlay" hidden aria-modal="true" role="dialog" aria-labelledby="modalTitle">
+    <div class="modal glass">
+      <div class="modal-header">
+        <h3 id="modalTitle">Optimized Prompt Ready</h3>
+        <button class="modal-close" id="modalCloseBtn" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Your optimized prompt has been copied to clipboard. Paste it into your preferred AI tool:</p>
+        <div class="ai-tools-grid">
+          <a class="ai-tool-btn" href="https://chat.openai.com" target="_blank" rel="noopener noreferrer">ChatGPT</a>
+          <a class="ai-tool-btn" href="https://claude.ai" target="_blank" rel="noopener noreferrer">Claude</a>
+          <a class="ai-tool-btn" href="https://gemini.google.com" target="_blank" rel="noopener noreferrer">Gemini</a>
+          <a class="ai-tool-btn" href="https://midjourney.com" target="_blank" rel="noopener noreferrer">Midjourney</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast" aria-live="assertive" role="status"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
